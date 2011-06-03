@@ -8,9 +8,11 @@
 
 //WAAutocompleteHandler defines
 #define kAutocompleteItemPlistKey @"String"               //key for object in plist dictionary
-#define kAutocompleteItemCoreDataAttributeKey @"String"   //key for attribute in CoreData entity
+#define kAutocompleteItemPlistKeyIcon @"Icon"
+#define kAutocompleteItemCoreDataAttributeKey @"String"   //key for attribute in CoreData entity CAVE: there are some places in the code where you have to rename this manually (NSPredicate predicateWithFormat...)
+#define kAutocompleteItemCoreDataAttributeKeyIcon @"Icon"   //key for attribute in CoreData icon entity
 #define kAutocompleteItemCoreDataEntityName @"CDAutocompleteItem" //name of CoreData entity
-#define kAutocompletePlistFileName @"autocompleteData"      //name of plist file with autocomplete data
+#define kAutocompletePlistFileName @"AutocompleteData"      //name of plist file with autocomplete data
 
 //adjust popoverView
 #define kNumberOfItemsVisible 5

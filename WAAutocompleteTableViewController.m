@@ -128,6 +128,11 @@
     NSManagedObject *managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
     NSString *text = [[managedObject valueForKey:kAutocompleteItemCoreDataAttributeKey] description];
     cell.textLabel.text = text;
+    NSString *iconString = [managedObject valueForKey:kAutocompleteItemCoreDataAttributeKeyIcon];
+    if (iconString) {
+        UIImage *icon = [UIImage imageNamed:iconString];
+        cell.imageView.image = icon;
+    }    
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -178,7 +183,8 @@
     //apply predicate if needed
     if (!self.showAll) {
         NSPredicate *predicate;
-        predicate = [NSPredicate predicateWithFormat:@"%@ BEGINSWITH [cd] %@", kAutocompleteItemCoreDataAttributeKey, self.currentStringOfInterest];
+#pragma mark ADJUST string to your CoreData attribute name
+        predicate = [NSPredicate predicateWithFormat:@"String BEGINSWITH [cd] %@", self.currentStringOfInterest];
         [fetchRequest setPredicate:predicate];
     }
     
@@ -272,8 +278,8 @@
     
     NSArray *fetchedObjects = [self.fetchedResultsController fetchedObjects];
     NSPredicate *predicate;
-    //predicate = [NSPredicate predicateWithFormat:@"%@ CONTAINS %@", kAutocompleteItemCoreDataAttributeKey, self.currentStringOfInterest];
-    predicate = [NSPredicate predicateWithFormat:@"string BEGINSWITH [cd] %@", self.currentStringOfInterest];
+#pragma mark ADJUST string to your CoreData attribute name
+    predicate = [NSPredicate predicateWithFormat:@"String BEGINSWITH [cd] %@", self.currentStringOfInterest];
     DLog(@"%@", predicate);
     for (id object in fetchedObjects) {
         DLog(@"%@", [object valueForKey:kAutocompleteItemCoreDataAttributeKey]);

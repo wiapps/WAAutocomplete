@@ -32,8 +32,8 @@
 
 - (id)initWithMOC:(NSManagedObjectContext*)initMOC andEntity:(NSString*)autocompletionEntity;
 
-- (void)importAutocompletionDataFromPlistFile:(NSString*)plistName;
-- (void)addStringToAutocompletionData:(NSString*)newAutocompletionString;
+- (void)importAutocompleteDataFromPlistFile:(NSString*)plistName;
+- (void)addStringToAutocompleteData:(NSString*)newAutocompletionString withIcon:(UIImage*)icon;
 
 - (void)textViewDidChange:(UITextView*)textView;
 

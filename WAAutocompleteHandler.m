@@ -42,11 +42,8 @@
 
 #pragma mark -
 #pragma mark @"create / extend autocompletion database"
-- (void)importAutocompletionDataFromPlistFile:(NSString*)plistName
+- (void)importAutocompleteDataFromPlistFile:(NSString*)plistName
 {
-    NSAssert(self.moc, @"You need to call - (id)initWithMOC:(NSManagedObjectContext*)initMOC andEntity:(NSString*)autocompletionEntity");
-    NSAssert(self.cdEntity, @"You need to call - (id)initWithMOC:(NSManagedObjectContext*)initMOC andEntity:(NSString*)autocompletionEntity");
-    
     NSString *plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
     NSAssert(plistPath, @"Plist file not found");
 
@@ -57,7 +54,12 @@
         id autocompleteEntity = [NSEntityDescription insertNewObjectForEntityForName:self.cdEntity inManagedObjectContext:self.moc];
         NSString *string = [dict objectForKey:kAutocompleteItemPlistKey];
 		[autocompleteEntity setValue:string forKey:kAutocompleteItemCoreDataAttributeKey];
-        DLog(@"");
+        
+        NSString *iconString = [dict objectForKey:kAutocompleteItemPlistKeyIcon];
+        if (iconString) {
+            [autocompleteEntity setValue:iconString forKey:kAutocompleteItemCoreDataAttributeKeyIcon];
+        }
+		
 	}
 	[rawData release];
     
@@ -72,14 +74,15 @@
 
 }
 
-- (void)addStringToAutocompletionData:(NSString*)newAutocompletionString
+- (void)addStringToAutocompleteData:(NSString*)newAutocompleteString withIcon:(UIImage*)icon
 {
-    NSAssert(self.moc, @"You need to call - (id)initWithMOC:(NSManagedObjectContext*)initMOC andEntity:(NSString*)autocompletionEntity");
-    NSAssert(self.cdEntity, @"You need to call - (id)initWithMOC:(NSManagedObjectContext*)initMOC andEntity:(NSString*)autocompletionEntity");
-    
     id autocompleteEntity = [NSEntityDescription insertNewObjectForEntityForName:self.cdEntity inManagedObjectContext:self.moc];
-    [autocompleteEntity setValue:newAutocompletionString forKey:kAutocompleteItemCoreDataAttributeKey];
+    [autocompleteEntity setValue:newAutocompleteString forKey:kAutocompleteItemCoreDataAttributeKey];
 	    
+    if (icon) {
+        [autocompleteEntity setValue:icon forKey:kAutocompleteItemCoreDataAttributeKeyIcon];
+    }
+    
 	NSError *error = nil;
 	if (![self.moc save:&error]) {
 		// Update to handle the error appropriately.
@@ -127,8 +130,17 @@
         beginningPosition = beginningPositionSpace;
     }
         
-    if (beginningPosition.location != NSNotFound) {
-        self.currentTextOfInterest = [leftPartOfText substringFromIndex:(beginningPosition.location + 1)];        
+    if ((beginningPosition.location != NSNotFound) || ((currentCursorPositionOfTextView.location - [leftPartOfText length]) == 0)) {
+        if ([leftPartOfText length] > 1) {
+            if ((beginningPosition.location != NSNotFound)) {
+                self.currentTextOfInterest = [leftPartOfText substringFromIndex:(beginningPosition.location + 1)];
+            }
+            else
+            {
+                self.currentTextOfInterest = [leftPartOfText substringFromIndex:0];
+            }
+            
+        }                
         if ([self.currentTextOfInterest length] > 2) {
             showAutocomplete = YES;
         }        
