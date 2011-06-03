@@ -1,11 +1,19 @@
-3 ways of feeding autocomplete database:
+What is WAAutocomplete?
+========================================
+WAAutocomplete shows autocomplete suggestions via a UIPopoverController for entering text in a UITextView. The autocomplete suggestions are fetched from CoreData and displayed in a UITableView.
+
+3 ways of feeding the autocomplete database:
 ========================================
 1.) Load data from plist file
-2.) Add data during runtime from user actions (Howto TBD)
+2.) Add data during runtime from user actions (Howto / Test TBD)
 3.) Add data during runtime from CoreData (TBD)
 
 HowTo Use WAAutocomplete?
 ========================
+
+1.) Load data from plist file
+
+Make sure the plist file is read only once in the application delegate (don't forget to create the CoreData model) :
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     
@@ -36,8 +44,10 @@ HowTo Use WAAutocomplete?
         WAAutocompleteHandler *autocompletionHandler = [[WAAutocompleteHandler alloc] initWithMOC:self.managedObjectContext andEntity:kAutocompleteItemCoreDataEntityName];
         [autocompletionHandler importAutocompletionDataFromPlistFile:kAutocompletePlistFileName];
         [autocompletionHandler release];
+	}
+}
 
-
+Init the autocompleteHandler with the ManagedObjectContext and the name of the coredata entity
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -46,6 +56,7 @@ HowTo Use WAAutocomplete?
 	
 }
 
+Call the autocompleteHandler whenever a text in the textview has changed
 - (void)textViewDidChange:(UITextView *)textView
 {    
     //autocomplete

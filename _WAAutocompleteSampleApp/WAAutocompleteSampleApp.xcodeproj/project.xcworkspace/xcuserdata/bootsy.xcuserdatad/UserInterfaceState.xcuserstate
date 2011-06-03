@@ -1914,7 +1914,7 @@
 		<string>PrimaryDocumentVisibleCharacterRange</string>
 		<string>HideAllIssues</string>
 		<string>PrimaryDocumentSelectedCharacterRange</string>
-		<real>328810104.75103599</real>
+		<real>328811088.88098699</real>
 		<string>{7371, 3480}</string>
 		<string>{10468, 0}</string>
 		<string>-checkForMatchWithString:</string>
@@ -1960,7 +1960,7 @@
 				</dict>
 			</array>
 		</dict>
-		<string>{{0, 0}, {1631, 1131}}</string>
+		<string>{{0, 0}, {1631, 1153}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -7305,7 +7305,7 @@
 				</dict>
 			</array>
 		</dict>
-		<real>328810104.75025898</real>
+		<real>328811088.88049197</real>
 		<string>{7371, 3480}</string>
 		<string>{10468, 0}</string>
 		<dict>
