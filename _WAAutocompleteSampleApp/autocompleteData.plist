@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>String</key>
+		<string>hell</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>hello</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>heel</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>head</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>heard</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>herd</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>hellfire</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>world</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>word</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>worm</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>worst</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>would</string>
+	</dict>
+	<dict>
+		<key>String</key>
+		<string>wool</string>
+	</dict>
+</array>
+</plist>

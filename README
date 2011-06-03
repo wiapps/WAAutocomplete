@@ -1,0 +1,55 @@
+3 ways of feeding autocomplete database:
+========================================
+1.) Load data from plist file
+2.) Add data during runtime from user actions (Howto TBD)
+3.) Add data during runtime from CoreData (TBD)
+
+HowTo Use WAAutocomplete?
+========================
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
+    
+    // Override point for customization after application launch.
+
+    // Add the navigation controller's view to the window and display.
+    [self.window addSubview:navigationController.view];
+    [self.window makeKeyAndVisible];
+    
+    //check if autocomplete data import is available
+    [self loadAutocompleteDataIfNeeded];
+
+    return YES;
+}
+
+- (void)loadAutocompleteDataIfNeeded
+{
+	NSError *error;
+	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+	NSEntityDescription *entity = [NSEntityDescription entityForName:kAutocompleteItemCoreDataEntityName inManagedObjectContext:self.managedObjectContext];
+	[fetchRequest setEntity:entity];	
+	NSArray *foundEntitys = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+
+    //create if loading first time
+	if(![foundEntitys count])
+	{        
+        //import autocomplete data
+        WAAutocompleteHandler *autocompletionHandler = [[WAAutocompleteHandler alloc] initWithMOC:self.managedObjectContext andEntity:kAutocompleteItemCoreDataEntityName];
+        [autocompletionHandler importAutocompletionDataFromPlistFile:kAutocompletePlistFileName];
+        [autocompletionHandler release];
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    //autocomplete init
+    autocompleteHandler = [[WAAutocompleteHandler alloc] initWithMOC:self.managedObjectContext andEntity:kAutocompleteItemCoreDataEntityName];
+	
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{    
+    //autocomplete
+    [self.autocompleteHandler textViewDidChange:textView];
+}
+    }
+}

@@ -1,0 +1,19 @@
+# xcode noisee
+_WAAutocompleteSampleApp/build/*
+
+_WAAutocompleteSampleApp/*.xcodeproj/*.pbxuser
+_WAAutocompleteSampleApp/*.xcodeproj/*.perspectivev3
+
+*.pbxuser
+.swp
+.perspective
+*.perspectivev3
+*.mode1v3
+
+# old skool
+.svn
+
+# osx noise
+.DS_Store
+profile
+
