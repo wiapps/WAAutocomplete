@@ -8,13 +8,6 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
-@class  WAAutocompleteTableViewController;
-
-@protocol WAAutocompleteTableViewControllerDelegate
-- (void) tableViewController:(WAAutocompleteTableViewController *)controller hasFoundMatch:(BOOL)match;
-- (void)tableViewController:(WAAutocompleteTableViewController *)controller didSelectString:(NSString*)string;
-@end
-
 @interface WAAutocompleteTableViewController : UITableViewController <NSFetchedResultsControllerDelegate> {
     NSString *cdEntity;
     NSManagedObjectContext *moc;

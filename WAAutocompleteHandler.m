@@ -7,7 +7,7 @@
 
 #import "WAAutocompleteHandler.h"
 #import "WAAutocompleteDefines.h"
-
+#import "WAAutocompleteTableViewController.h"
 
 @implementation WAAutocompleteHandler
 @synthesize moc;
@@ -40,6 +40,25 @@
     [super dealloc];
 }
 
+- (NSManagedObject*)existingObjectForPredicate:(NSPredicate*)predicate andEntityDescription:(NSString*)entityDescription
+{
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+
+	NSEntityDescription *entity;
+    entity = [NSEntityDescription entityForName:entityDescription inManagedObjectContext:self.moc];    
+	[fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:predicate];
+	
+    NSError *error = nil;
+	NSArray *objects = [self.moc executeFetchRequest:fetchRequest error:&error];
+    
+    if (![objects count]) {
+        return nil;
+    }
+    
+    return [objects objectAtIndex:0];
+}
+
 #pragma mark -
 #pragma mark @"create / extend autocompletion database"
 - (void)importAutocompleteDataFromPlistFile:(NSString*)plistName
@@ -51,9 +70,14 @@
 	NSArray *rawData = [[NSArray alloc] initWithContentsOfFile:plistPath];    
 	for(NSDictionary *dict in rawData)
 	{
-        id autocompleteEntity = [NSEntityDescription insertNewObjectForEntityForName:self.cdEntity inManagedObjectContext:self.moc];
+
         NSString *string = [dict objectForKey:kAutocompleteItemPlistKey];
-		[autocompleteEntity setValue:string forKey:kAutocompleteItemCoreDataAttributeKey];
+        id autocompleteEntity = [self existingObjectForPredicate:[NSPredicate predicateWithFormat:@"%@ LIKE %@", kAutocompleteItemCoreDataAttributeKey, string] andEntityDescription:self.cdEntity];
+        
+        if (!autocompleteEntity) {
+            autocompleteEntity = [NSEntityDescription insertNewObjectForEntityForName:self.cdEntity inManagedObjectContext:self.moc];
+            [autocompleteEntity setValue:string forKey:kAutocompleteItemCoreDataAttributeKey];
+        }
         
         NSString *iconString = [dict objectForKey:kAutocompleteItemPlistKeyIcon];
         if (iconString) {
@@ -101,6 +125,8 @@
     self.currentTextOfInterest = @"";
     
 #pragma mark adjust logic to your needs
+    
+    //TODO: make this into a block!!!
     //###################################
     //BEGIN OF CUSTOMIZATION
     //###################################
@@ -141,10 +167,20 @@
             }
             
         }                
-        if ([self.currentTextOfInterest length] > 2) {
+        /*
+         if ([self.currentTextOfInterest length] > 2) {
             showAutocomplete = YES;
-        }        
-    }
+        }
+         */
+        NSString *firstChar = nil;
+        if ([self.currentTextOfInterest length]) {
+            firstChar = [self.currentTextOfInterest substringToIndex:1];
+        }
+        if (firstChar && [firstChar isEqualToString:@"\\"]) {
+            showAutocomplete = YES;
+        }
+    }  
+    
     
     //###################################
     //END OF CUSTOMIZATION
@@ -191,14 +227,77 @@
         UILineBreakMode lineBreakMode = UILineBreakModeWordWrap;
         NSString *text = self.textView.text;
         CGSize totalTextSize = [text sizeWithFont:font constrainedToSize:textViewRect.size lineBreakMode:lineBreakMode];
+        CGSize contentSize = self.textView.contentSize;
+       //HACK
+        totalTextSize = contentSize;
+        
        //TODO: adjust to width of last line of text only
         //TODO: add scrollview offset...
         // CGFloat textWidthOfLastLine = ;
         CGSize textOfInterestSize = [self.currentTextOfInterest sizeWithFont:font forWidth:width lineBreakMode:lineBreakMode];
+        CGFloat lineHeight = textOfInterestSize.height;
+        NSUInteger totalNumberOfLines = (NSUInteger)(totalTextSize.height / lineHeight);
         
-        CGRect rect = CGRectMake(totalTextSize.width - floor(textOfInterestSize.width / 2), totalTextSize.height, textOfInterestSize.width, textOfInterestSize.height);
+        //NSRange cursorPosition = [self.textView selectedRange];
+        CGFloat cursorPositionX = totalTextSize.width;
+        /*
+        //if not first line find current x position
+        if (totalNumberOfLines > 1) {
+            NSString *contentText = [NSString stringWithFormat:@"%@",text];
+            NSUInteger currentLine = 1;
+            NSUInteger maxNumberOfCharsInLine = (NSUInteger)totalTextSize.width; //limit while loop
+            while (currentLine < totalNumberOfLines) {
+                NSUInteger currentTextIndex = 1;
+                while ((currentTextIndex < maxNumberOfCharsInLine) && (currentTextIndex < [contentText length])) {
+                    NSRange currentRange = NSMakeRange(0, currentTextIndex);
+                    NSString *currentSubText = [contentText substringWithRange:currentRange];
+                    CGSize currentTextSize = [currentSubText sizeWithFont:font constrainedToSize:textViewRect.size lineBreakMode:lineBreakMode];
+                    if (currentTextSize.height > lineHeight) {
+                        DLog(@"");
+                        break;
+                    }
+                    currentTextIndex++;
+                }
+                //remove current line from total text
+                NSString *lastLine = [contentText substringToIndex:currentTextIndex];
+                contentText = [contentText substringFromIndex:currentTextIndex];
+                currentLine++;
+                DLog(@"");
+            }
+            
+            //actual position in current line
+            CGSize currentTextSize = [contentText sizeWithFont:font constrainedToSize:textViewRect.size lineBreakMode:lineBreakMode];
+            cursorPositionX = currentTextSize.width;
+            DLog(@"");
+        }
+        */
         
-        [autocompletePopoverController presentPopoverFromRect:rect inView:self.textView permittedArrowDirections:kPermittedArrowDirections animated:YES];
+        /*
+        CGFloat x, y, w, h;
+        x = cursorPositionX - floor(textOfInterestSize.width / 2);
+        y = totalTextSize.height - floor(lineHeight / 2);
+        w = textOfInterestSize.width;
+        h = textOfInterestSize.height;        
+        CGRect rect = CGRectMake(x, y, w, h);
+        */
+        
+        //new approach
+        if (self.textView.selectedTextRange.empty) {
+            // get cursor position and do stuff ...
+            CGPoint cursorPosition = [self.textView caretRectForPosition:self.textView.selectedTextRange.start].origin;
+            
+            CGFloat x, y, w, h;
+#define kRightOffset 5
+            x = cursorPosition.x - textOfInterestSize.width;
+            y = cursorPosition.y;// - textOfInterestSize.height;
+            w = textOfInterestSize.width + kRightOffset;
+            h = textOfInterestSize.height;        
+            CGRect rect = CGRectMake(x, y, w, h);
+            
+            [autocompletePopoverController presentPopoverFromRect:rect inView:self.textView permittedArrowDirections:kPermittedArrowDirections  animated:YES];
+        }
+
+        //[autocompletePopoverController presentPopoverFromRect:rect inView:self.textView permittedArrowDirections:kPermittedArrowDirections  animated:YES];
     }
     else
     {

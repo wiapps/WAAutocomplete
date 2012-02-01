@@ -7,7 +7,7 @@
 
 #import "WAAutocompleteTableViewController.h"
 #import "WAAutocompleteDefines.h"
-
+#import "WAAutocompleteTableViewControllerDelegate.h"
 
 
 @implementation WAAutocompleteTableViewController
@@ -190,7 +190,11 @@
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.moc sectionNameKeyPath:nil cacheName:nil];//@"WAAutocompletion"];
+    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] 
+                                                             initWithFetchRequest:fetchRequest 
+                                                             managedObjectContext:self.moc 
+                                                             sectionNameKeyPath:nil 
+                                                             cacheName:@"WAAutocompletion"];//@"WAAutocompletion"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
@@ -280,9 +284,9 @@
     NSPredicate *predicate;
 #pragma mark ADJUST string to your CoreData attribute name
     predicate = [NSPredicate predicateWithFormat:@"String BEGINSWITH [cd] %@", self.currentStringOfInterest];
-    DLog(@"%@", predicate);
+    //DLog(@"%@", predicate);
     for (id object in fetchedObjects) {
-        DLog(@"%@", [object valueForKey:kAutocompleteItemCoreDataAttributeKey]);
+       // DLog(@"%@", [object valueForKey:kAutocompleteItemCoreDataAttributeKey]);
     }
     NSArray *filteredArray = [fetchedObjects filteredArrayUsingPredicate:predicate];
     if ([filteredArray count]) {
@@ -295,7 +299,7 @@
         [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
         
         for (id object in filteredArray) {
-            DLog(@"filtered %@", [object valueForKey:kAutocompleteItemCoreDataAttributeKey]);
+            //DLog(@"filtered %@", [object valueForKey:kAutocompleteItemCoreDataAttributeKey]);
         }
     }
     

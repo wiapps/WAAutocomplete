@@ -7,7 +7,9 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "WAAutocompleteTableViewController.h"
+#import "WAAutocompleteTableViewControllerDelegate.h"
+
+@class WAAutocompleteTableViewController;
 
 @interface WAAutocompleteHandler : NSObject <UIPopoverControllerDelegate, WAAutocompleteTableViewControllerDelegate> {
     
@@ -36,5 +38,7 @@
 - (void)addStringToAutocompleteData:(NSString*)newAutocompletionString withIcon:(UIImage*)icon;
 
 - (void)textViewDidChange:(UITextView*)textView;
+
+- (NSManagedObject*)existingObjectForPredicate:(NSPredicate*)predicate andEntityDescription:(NSString*)entityDescription;
 
 @end
